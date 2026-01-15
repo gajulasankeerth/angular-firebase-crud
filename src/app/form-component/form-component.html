@@ -5,7 +5,21 @@
       <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <!-- Logo and Company Name -->
         <div class="flex items-center gap-3">
-          <div class="w-8 h-8 bg-gold transform rotate-45"></div>
+          <svg width="36" height="36" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <rect width="120" height="120" fill="white" />
+
+            <!-- Diagonal lattice -->
+            <g stroke="#F2C94C" stroke-width="10" stroke-linecap="round">
+              <line x1="0" y1="30" x2="120" y2="150" />
+              <line x1="-20" y1="0" x2="100" y2="120" />
+              <line x1="20" y1="-20" x2="140" y2="100" />
+
+              <line x1="120" y1="30" x2="0" y2="150" />
+              <line x1="140" y1="0" x2="20" y2="120" />
+              <line x1="100" y1="-20" x2="-20" y2="100" />
+            </g>
+          </svg>
+
           <div>
             <h1 class="text-2xl font-bold text-gray-900">Lusso Granite</h1>
             <p class="text-sm text-gray-600">Premium Stone Countertops</p>
