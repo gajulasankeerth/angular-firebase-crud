@@ -1,0 +1,104 @@
+/* Portal specific styles */
+.bg-gray-800 {
+  background-color: #1f2937;
+}
+
+.bg-gray-700 {
+  background-color: #374151;
+}
+
+.bg-gray-600 {
+  background-color: #4b5563;
+}
+
+.border-gray-700 {
+  border-color: #374151;
+}
+
+/* Modal backdrop */
+.bg-opacity-50 {
+  backdrop-filter: blur(4px);
+}
+
+/* Custom scrollbar for modal */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Smooth modal animation */
+.fixed {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.bg-white.rounded-lg.shadow-2xl {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Status button hover effects */
+button[class*="border-"]:hover {
+  transform: translateY(-2px);
+}
+
+/* Section card hover effect */
+.bg-white.rounded-lg.shadow-sm:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+/* Gold gradient text */
+.text-gold {
+  background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Enhanced status button styles */
+button[class*="bg-yellow"] {
+  box-shadow: 0 2px 4px rgba(234, 179, 8, 0.2);
+}
+
+button[class*="bg-blue"] {
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+}
+
+button[class*="bg-purple"] {
+  box-shadow: 0 2px 4px rgba(168, 85, 247, 0.2);
+}
+
+button[class*="bg-green"] {
+  box-shadow: 0 2px 4px rgba(34, 197, 94, 0.2);
+}

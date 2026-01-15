@@ -1,0 +1,826 @@
+/* Project Notes & Memo Section Styles */
+.project-notes-section {
+  background: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.client-memo-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  background-color: #fef3c7; /* amber-50 equivalent */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.client-memo-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  background: #ffffff;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: #374151;
+  resize: vertical;
+  min-height: 150px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.client-memo-textarea:focus {
+  outline: none;
+  border-color: #d4af37;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.client-memo-textarea::placeholder {
+  color: #9ca3af;
+}
+
+.print-only {
+  display: none;
+}
+
+/* Important Information Section Styles */
+.important-info-section {
+  background: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.important-info-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background-color: #fef3c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.important-info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.important-info-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  color: #4b5563;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.important-info-list li .bullet {
+  color: #9ca3af;
+  font-size: 1.25rem;
+  line-height: 1;
+  margin-top: 0.125rem;
+}
+
+/* Responsive adjustments for Project Notes & Memo */
+@media (max-width: 640px) {
+  .client-memo-textarea {
+    min-height: 120px;
+    font-size: 0.875rem;
+  }
+
+  .important-info-list li {
+    font-size: 0.875rem;
+  }
+}
+
+/* Styles for dynamic Areas UI and modal */
+.area-box {
+  border-radius: 0.5rem;
+  background: #ffffff;
+  position: relative; /* allow absolutely positioned controls inside */
+}
+
+.area-modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Remove button placed in top-right corner of each area card */
+.area-remove-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  padding: 0.5rem 1rem; /* more padding to avoid overlap */
+  z-index: 2;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: #dc2626; /* red-600 */
+  border: 1px solid rgba(156, 163, 175, 0.2); /* subtle border */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  transition: background-color 120ms ease, transform 120ms ease;
+}
+
+.area-remove-btn:hover {
+  background: rgba(220, 38, 38, 0.06);
+  transform: translateY(-1px);
+}
+
+.area-remove-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* simple responsive tweaks for modal content */
+@media (max-width: 640px) {
+  .area-modal .max-w-md {
+    width: 100%;
+  }
+}
+
+/* Table Styles */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-family: inherit;
+}
+
+table th,
+table td {
+  border: 1px solid #e5e7eb;
+}
+
+table th {
+  background: linear-gradient(to right, #f9fafb, #f3f4f6);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #374151;
+  position: relative;
+}
+
+table th::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(to right, transparent, #d4af37, transparent);
+}
+
+table tbody tr {
+  transition: all 0.2s ease;
+}
+
+table tbody tr:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+table tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+table tbody tr:nth-child(even):hover {
+  background: linear-gradient(to right, rgba(212, 175, 55, 0.05), rgba(212, 175, 55, 0.1));
+}
+
+table tbody tr:nth-child(odd):hover {
+  background: linear-gradient(to right, rgba(212, 175, 55, 0.05), rgba(212, 175, 55, 0.1));
+}
+
+/* Enhanced table container */
+.overflow-x-auto {
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.overflow-x-auto table {
+  border-radius: 0.5rem;
+  min-width: 1000px;
+}
+
+/* Responsive table styles */
+@media (max-width: 768px) {
+  .overflow-x-auto {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+
+  table {
+    min-width: 900px;
+    width: auto;
+  }
+
+  table th,
+  table td {
+    white-space: nowrap;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  table th {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+  }
+
+  table td {
+    font-size: 0.75rem;
+  }
+
+  /* Remove sticky positioning for action column on mobile */
+  td:last-child {
+    min-width: 120px;
+  }
+
+  /* Make action buttons more compact */
+  .flex.items-center.justify-center.gap-3 {
+    gap: 0.5rem;
+  }
+
+  .p-2.text-gold,
+  .p-2.text-red-600 {
+    padding: 0.25rem;
+  }
+
+  .w-5.h-5 {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+/* Modal Styles */
+.fixed.inset-0 {
+  z-index: 9999;
+}
+
+/* Print Styles - Optimized for Single Page */
+@media print {
+  @page {
+    size: letter;
+    margin: 0.25in;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .bg-cream {
+    background: white !important;
+  }
+
+  .bg-white {
+    background: white !important;
+  }
+
+  .shadow-sm {
+    box-shadow: none !important;
+  }
+
+  .rounded-lg {
+    border-radius: 0 !important;
+  }
+
+  .border {
+    border: 1px solid #e5e7eb !important;
+  }
+
+  .border-b-2 {
+    border-bottom: 1px solid #000 !important;
+  }
+
+  .border-dashed {
+    border-style: solid !important;
+    border-color: #e5e7eb !important;
+  }
+
+  /* Compact spacing for print */
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* Reduce heading sizes */
+  h2 {
+    font-size: 18px !important;
+    margin-bottom: 4px !important;
+  }
+
+  h3 {
+    font-size: 14px !important;
+    margin-bottom: 3px !important;
+  }
+
+  h4 {
+    font-size: 12px !important;
+    margin-bottom: 2px !important;
+  }
+
+  p {
+    font-size: 10px !important;
+    margin-bottom: 2px !important;
+  }
+
+  /* Compact form sections */
+  .space-y-8,
+  .space-y-10 {
+    gap: 6px !important;
+  }
+
+  .space-y-6 {
+    gap: 4px !important;
+  }
+
+  .space-y-4 {
+    gap: 3px !important;
+  }
+
+  /* Club Customer Info and Project Address for print - Side by Side */
+  .print-form-container {
+    display: block !important;
+  }
+
+  /* Create a wrapper for the two sections */
+  .print-section-customer,
+  .print-section-project {
+    width: 49% !important;
+    display: inline-block !important;
+    vertical-align: top !important;
+    margin-bottom: 3px !important;
+    padding: 4px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .print-section-customer {
+    margin-right: 1% !important;
+  }
+
+  .print-section-project {
+    margin-left: 1% !important;
+  }
+
+  /* Reduce heading sizes in clubbed sections */
+  .print-section-customer h3,
+  .print-section-project h3 {
+    font-size: 9px !important;
+    margin-bottom: 1px !important;
+    line-height: 1.1 !important;
+    font-weight: 700 !important;
+  }
+
+  .print-section-customer p,
+  .print-section-project p {
+    font-size: 7px !important;
+    margin-bottom: 2px !important;
+    display: none !important; /* Hide subtitle for print */
+  }
+
+  .print-section-customer .bg-gold,
+  .print-section-project .bg-gold {
+    width: 20px !important;
+    height: 1px !important;
+    margin-top: 1px !important;
+    margin-bottom: 2px !important;
+  }
+
+  /* Compact grid in clubbed sections */
+  .print-section-customer .grid,
+  .print-section-project .grid {
+    gap: 2px !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .print-section-customer .space-y-6,
+  .print-section-project .space-y-6 {
+    gap: 2px !important;
+  }
+
+  /* Compact labels and inputs in clubbed sections */
+  .print-section-customer label,
+  .print-section-project label {
+    font-size: 7px !important;
+    margin-bottom: 1px !important;
+  }
+
+  .print-section-customer input,
+  .print-section-project input,
+  .print-section-customer select,
+  .print-section-project select {
+    font-size: 8px !important;
+    padding: 1px 2px !important;
+    height: auto !important;
+    line-height: 1.1 !important;
+  }
+
+  /* Ensure sections after clubbed sections flow correctly */
+  .print-clearfix {
+    width: 100% !important;
+    display: block !important;
+    clear: both !important;
+    margin-top: 6px !important;
+  }
+
+  /* Alternative: Use a wrapper approach */
+  .print-form-container::after {
+    content: '';
+    display: table;
+    clear: both;
+    width: 100%;
+  }
+
+  /* Compact Project Type section for print */
+  .print-section-project-type {
+    padding: 3px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .print-section-project-type h3 {
+    font-size: 9px !important;
+    margin-bottom: 1px !important;
+  }
+
+  .print-section-project-type p {
+    font-size: 7px !important;
+    margin-bottom: 1px !important;
+    display: none !important; /* Hide subtitle for print */
+  }
+
+  .print-section-project-type .bg-gold {
+    width: 15px !important;
+    height: 1px !important;
+    margin-top: 1px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .print-project-type-grid {
+    gap: 2px !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .print-section-project-type label {
+    padding: 1px 2px !important;
+    border: none !important;
+    border-width: 0 !important;
+    margin-bottom: 1px !important;
+    gap: 2px !important;
+    display: flex !important;
+    align-items: center !important;
+    min-height: 12px !important;
+    background: transparent !important;
+  }
+
+  .print-section-project-type input[type='checkbox'] {
+    width: 8px !important;
+    height: 8px !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    flex-shrink: 0 !important;
+    align-self: center !important;
+  }
+
+  .print-section-project-type .flex-1 {
+    flex: 1 1 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+  }
+
+  .print-section-project-type .font-semibold {
+    font-size: 8px !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print-section-project-type .text-sm {
+    font-size: 6px !important;
+    margin-top: 1px !important;
+    display: none !important; /* Hide descriptions for print */
+  }
+
+  /* Ensure grid items align properly */
+  .print-project-type-grid > label,
+  .print-project-type-label {
+    display: flex !important;
+    align-items: center !important;
+    vertical-align: top !important;
+  }
+
+  /* Override items-start for print */
+  .print-project-type-label.items-start {
+    align-items: center !important;
+  }
+
+  /* Reduce padding in cards */
+  .p-6,
+  .p-8 {
+    padding: 12px !important;
+  }
+
+  .py-8,
+  .py-12 {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+
+  .mb-6,
+  .mb-8,
+  .mb-10,
+  .mb-12 {
+    margin-bottom: 8px !important;
+  }
+
+  .mt-2 {
+    margin-top: 4px !important;
+  }
+
+  /* Compact grid gaps */
+  .gap-4,
+  .gap-6 {
+    gap: 8px !important;
+  }
+
+  /* Ensure form fields are visible when printing */
+  input,
+  select {
+    border-bottom: 1px solid #000 !important;
+    background: transparent !important;
+    padding: 2px 4px !important;
+    font-size: 11px !important;
+    min-height: auto !important;
+    height: auto !important;
+  }
+
+  label {
+    font-size: 10px !important;
+    margin-bottom: 2px !important;
+  }
+
+  /* Hide interactive elements */
+  button:not(.no-print),
+  .no-print {
+    display: none !important;
+  }
+
+  /* Compact area sections */
+  .bg-white {
+    page-break-inside: avoid;
+    margin-bottom: 8px !important;
+    padding: 10px !important;
+  }
+
+  /* Remove gold accent lines or make them minimal */
+  .bg-gold {
+    height: 2px !important;
+    width: 60px !important;
+  }
+
+  /* Ensure no page breaks */
+  .bg-white,
+  form > div {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Compact text */
+  .text-lg {
+    font-size: 12px !important;
+  }
+
+  .text-base {
+    font-size: 11px !important;
+  }
+
+  .text-sm {
+    font-size: 10px !important;
+  }
+
+  /* Remove unnecessary spacing */
+  .text-center {
+    margin-bottom: 8px !important;
+  }
+
+  /* Compact list items */
+  ul li {
+    font-size: 10px !important;
+    margin-bottom: 2px !important;
+  }
+
+  /* Ensure form fits on one page */
+  form {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Print container optimization */
+  .print-container {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Hide success/error messages when printing */
+  .bg-green-50,
+  .bg-red-50 {
+    display: none !important;
+  }
+
+  /* Ensure all content fits */
+  .min-h-screen {
+    min-height: auto !important;
+  }
+
+  /* Compact checkbox/radio areas */
+  .grid {
+    gap: 6px !important;
+  }
+
+  /* Reduce area card padding */
+  [formGroupName] {
+    padding: 8px !important;
+    margin-bottom: 6px !important;
+  }
+
+  /* Compact add area button area */
+  .border-dashed {
+    padding: 8px !important;
+    margin-top: 6px !important;
+  }
+
+  /* Ensure single column layout for better space usage */
+  .md\:grid-cols-2,
+  .md\:grid-cols-3,
+  .md\:grid-cols-4,
+  .lg\:grid-cols-3,
+  .lg\:grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  /* Reduce font sizes further if needed */
+  .text-4xl,
+  .text-5xl {
+    font-size: 20px !important;
+    line-height: 1.2 !important;
+  }
+
+  .text-3xl {
+    font-size: 16px !important;
+    line-height: 1.2 !important;
+  }
+
+  .text-2xl {
+    font-size: 14px !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Remove all unnecessary margins */
+  * {
+    margin-top: 0 !important;
+  }
+
+  /* Compact form sections */
+  form > div:not(:last-child) {
+    margin-bottom: 6px !important;
+  }
+
+  /* Ensure inputs don't take too much space */
+  input[type='text'],
+  input[type='email'],
+  input[type='tel'],
+  select {
+    line-height: 1.2 !important;
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+  }
+
+  /* Force single page */
+  html,
+  body {
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Prevent page breaks */
+  .bg-white,
+  form > div,
+  [formGroupName] {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Table print styles - show full table without scroll */
+  .overflow-x-auto {
+    overflow: visible !important;
+  }
+
+  table {
+    font-size: 9px !important;
+    border-collapse: collapse !important;
+    width: 100% !important;
+    min-width: auto !important;
+  }
+
+  table th,
+  table td {
+    padding: 4px 6px !important;
+    border: 1px solid #000 !important;
+  }
+
+  /* Hide actions column in print */
+  table th:last-child,
+  table td:last-child {
+    display: none !important;
+  }
+
+  table th {
+    background-color: #f0f0f0 !important;
+    font-weight: 600 !important;
+  }
+
+  /* Hide modal when printing */
+  .fixed.inset-0 {
+    display: none !important;
+  }
+
+  /* Make memo section smaller for print */
+  .project-notes-section,
+  .important-info-section {
+    padding: 2px !important;
+    margin-bottom: 1px !important;
+    width: 49% !important;
+    display: inline-block !important;
+    vertical-align: top !important;
+  }
+
+  .project-notes-section {
+    margin-right: 1% !important;
+  }
+
+  .important-info-section {
+    margin-left: 1% !important;
+  }
+
+  .project-notes-section h3,
+  .important-info-section h3 {
+    font-size: 8px !important;
+    margin-bottom: 1px !important;
+  }
+
+  .project-notes-section p {
+    font-size: 6px !important;
+    margin-bottom: 1px !important;
+    display: none !important; /* Hide subtitle for print */
+  }
+
+  .client-memo-icon,
+  .important-info-icon {
+    width: 0.75rem !important;
+    height: 0.75rem !important;
+  }
+
+  .client-memo-textarea {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+    white-space: pre-wrap !important;
+    font-size: 7px !important;
+    color: black !important;
+    line-height: 1.2 !important;
+  }
+
+  .important-info-list li {
+    font-size: 6px !important;
+    padding: 1px 0 !important;
+    line-height: 1 !important;
+  }
+}
