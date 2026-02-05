@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormRequestService } from '../services/form-request-service';
+import { DropboxService } from '../services/dropbox.service';
 import {
   AbstractControl,
   FormArray,
@@ -22,6 +23,7 @@ import { RouterModule } from '@angular/router';
 export class FormComponent {
   private fb = inject(FormBuilder);
   private formService = inject(FormRequestService);
+  private dropboxService = inject(DropboxService);
 
   consultationForm: FormGroup;
   isSubmitting = false;
@@ -30,7 +32,12 @@ export class FormComponent {
   showAreaModal = false;
   editingAreaIndex: number | null = null;
   areaForm: FormGroup;
+  dropboxLink = '';
+  isUploadingToDropbox = false;
+  showSuccessToaster = false;
+  successToasterMessage = '';
 
+  // Modal properties
   predefinedColors = [
     'Absolute Black Granite',
     'White Carrara Marble',
@@ -94,9 +101,10 @@ export class FormComponent {
   }
 
   onSubmit() {
-    if (this.consultationForm.valid) {
+    if (!this.consultationForm.valid) {
       this.isSubmitting = true;
       this.submitError = '';
+      this.isUploadingToDropbox = true;
 
       // ✅ ALWAYS send plain JSON to Firebase
       const formData = {
@@ -106,11 +114,27 @@ export class FormComponent {
       };
       console.log('Submitting form data:', formData);
 
-      this.formService
-        .create(formData)
+      // Generate and upload PDF to Dropbox
+      const customerName = `${formData.firstName} ${formData.lastName}`;
+      this.dropboxService
+        .generateAndUploadPDF('print-container', customerName)
+        .then((dropboxUrl) => {
+          this.dropboxLink = dropboxUrl;
+          console.log('PDF uploaded to Dropbox:', dropboxUrl);
+
+          // Show success toaster
+          this.displaySuccessToaster('File saved successfully to Dropbox!');
+
+          // Add Dropbox link to form data
+          formData.dropboxLink = dropboxUrl;
+
+          // Submit to Firebase
+          return this.formService.create(formData);
+        })
         .then(() => {
           this.submitSuccess = true;
           this.isSubmitting = false;
+          this.isUploadingToDropbox = false;
 
           // reset form and clear areas
           this.consultationForm.reset();
@@ -118,11 +142,13 @@ export class FormComponent {
 
           setTimeout(() => {
             this.submitSuccess = false;
+            this.dropboxLink = '';
           }, 5000);
         })
         .catch((error) => {
           this.submitError = 'Failed to submit form. Please try again.';
           this.isSubmitting = false;
+          this.isUploadingToDropbox = false;
           console.error('Form submission error:', error);
         });
     } else {
@@ -136,6 +162,16 @@ export class FormComponent {
 
   trackByIndex(index: number) {
     return index;
+  }
+
+  displaySuccessToaster(message: string) {
+    this.successToasterMessage = message;
+    this.showSuccessToaster = true;
+
+    // Hide toaster after 3 seconds
+    setTimeout(() => {
+      this.showSuccessToaster = false;
+    }, 3000);
   }
 
   private createArea(): FormGroup {
@@ -218,7 +254,7 @@ export class FormComponent {
     return (
       this.areas.length > 0 &&
       this.areas.value.some((area: any) =>
-        Object.values(area).some((v) => v !== null && v !== undefined && v !== '')
+        Object.values(area).some((v) => v !== null && v !== undefined && v !== ''),
       )
     );
   }
@@ -266,7 +302,7 @@ export class FormComponent {
     }
 
     const hasAnyValue = areas.some((area) =>
-      Object.values(area).some((v) => v !== null && v !== undefined && v !== '')
+      Object.values(area).some((v) => v !== null && v !== undefined && v !== ''),
     );
 
     return hasAnyValue ? null : { required: true };

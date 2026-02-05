@@ -27,7 +27,9 @@
   color: #374151;
   resize: vertical;
   min-height: 150px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .client-memo-textarea:focus {
@@ -126,7 +128,9 @@
   align-items: center;
   gap: 0.4rem;
   font-weight: 600;
-  transition: background-color 120ms ease, transform 120ms ease;
+  transition:
+    background-color 120ms ease,
+    transform 120ms ease;
 }
 
 .area-remove-btn:hover {
@@ -263,6 +267,29 @@ table tbody tr:nth-child(odd):hover {
 /* Modal Styles */
 .fixed.inset-0 {
   z-index: 9999;
+}
+
+/* Toaster Animation */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
 }
 
 /* Print Styles - Optimized for Single Page */
