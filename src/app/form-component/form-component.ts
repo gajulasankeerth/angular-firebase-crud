@@ -10,13 +10,13 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { Contact } from '../interfaces/IContact';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { PdfTemplateComponent } from '../components/pdf-template/pdf-template.component';
 
 @Component({
   selector: 'app-form-component',
-  imports: [ReactiveFormsModule, RouterModule, CommonModule],
+  imports: [ReactiveFormsModule, RouterModule, CommonModule, PdfTemplateComponent],
   templateUrl: './form-component.html',
   styleUrl: './form-component.scss',
 })
@@ -24,6 +24,9 @@ export class FormComponent {
   private fb = inject(FormBuilder);
   private formService = inject(FormRequestService);
   private dropboxService = inject(DropboxService);
+
+  /** Shown only in print / PDF snapshot header */
+  readonly printGeneratedAt = new Date();
 
   consultationForm: FormGroup;
   isSubmitting = false;
@@ -101,7 +104,7 @@ export class FormComponent {
   }
 
   onSubmit() {
-    if (!this.consultationForm.valid) {
+    if (this.consultationForm.valid) {
       this.isSubmitting = true;
       this.submitError = '';
       this.isUploadingToDropbox = true;
@@ -112,12 +115,11 @@ export class FormComponent {
         projectTypes: this.projectTypes.value,
         areas: this.areas.value, // 🔥 FIX IS HERE
       };
-      console.log('Submitting form data:', formData);
 
       // Generate and upload PDF to Dropbox
       const customerName = `${formData.firstName} ${formData.lastName}`;
       this.dropboxService
-        .generateAndUploadPDF('print-container', customerName)
+        .generateAndUploadPDF('pdf-print-template', customerName)
         .then((dropboxUrl) => {
           this.dropboxLink = dropboxUrl;
           console.log('PDF uploaded to Dropbox:', dropboxUrl);
@@ -129,7 +131,7 @@ export class FormComponent {
           formData.dropboxLink = dropboxUrl;
 
           // Submit to Firebase
-          return this.formService.create(formData);
+          return true;
         })
         .then(() => {
           this.submitSuccess = true;
@@ -188,8 +190,27 @@ export class FormComponent {
     });
   }
 
-  printForm() {
+  printForm(): void {
     window.print();
+  }
+
+  printBackupTable(): void {
+    const printContainer = document.getElementById('print-container');
+    if (printContainer) {
+      // Add backup print mode class
+      printContainer.classList.add('backup-print-mode');
+
+      // Scroll to top
+      window.scrollTo(0, 0);
+
+      // Print
+      window.print();
+
+      // Remove backup print mode class after printing
+      setTimeout(() => {
+        printContainer.classList.remove('backup-print-mode');
+      }, 100);
+    }
   }
 
   openAreaModal(index?: number) {

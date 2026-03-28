@@ -6,6 +6,8 @@
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
     "start": "npm run shell",
+    "dropbox:oauth:start": "node scripts/dropbox-oauth.js start",
+    "dropbox:oauth:exchange": "node scripts/dropbox-oauth.js exchange",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log"
   },

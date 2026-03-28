@@ -1,0 +1,539 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+// ── CSS Custom Properties ──
+:host {
+  --gold: #c9a84c;
+  --gold-light: #e8c96a;
+  --gold-pale: #f9f3e3;
+  --gold-border: rgba(201, 168, 76, 0.25);
+  --dark: #1c1a17;
+  --mid: #4a4540;
+  --muted: #8a8278;
+  --light: #f4f0e8;
+  --white: #fdfcf9;
+  --border: #e8e2d8;
+  --radius: 6px;
+
+  display: none;
+}
+
+// ── Host Wrapper ──
+.body {
+  font-family: 'DM Sans', sans-serif;
+  background: #edeae3;
+  color: var(--dark);
+  padding: 32px 16px;
+  min-height: 100vh;
+  display: block;
+  width: 100%;
+  position: relative;
+}
+
+// ── Page Shell ──
+.page {
+  max-width: 100%;
+  margin: 0 auto;
+  background: var(--white);
+  box-shadow:
+    0 4px 40px rgba(0, 0, 0, 0.12),
+    0 1px 4px rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+// ── Header ──
+.pdf-header {
+  background: var(--dark);
+  padding: 28px 36px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 24pt;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+
+.brand-tag {
+  font-size: 8.5pt;
+  color: var(--gold);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.header-right {
+  text-align: right;
+
+  .label {
+    font-size: 7pt;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .value {
+    font-size: 9pt;
+    color: #ccc;
+    line-height: 1.6;
+  }
+}
+
+.doc-date {
+  display: inline-block;
+  margin-top: 8px;
+  background: rgba(201, 168, 76, 0.15);
+  border: 1px solid var(--gold-border);
+  border-radius: 3px;
+  padding: 3px 10px;
+  font-size: 8.5pt;
+  color: var(--gold-light);
+  letter-spacing: 0.05em;
+}
+
+// ── Gold Rule ──
+.gold-rule {
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+}
+
+// ── Body ──
+.pdf-body {
+  padding: 28px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+// ── Section Card ──
+.section {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.section-head {
+  background: linear-gradient(135deg, var(--gold-pale) 0%, #f0ead8 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 18px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 12pt;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.section-subtitle {
+  font-size: 8pt;
+  color: var(--muted);
+}
+
+.section-body {
+  padding: 16px 18px;
+
+  &.address-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+}
+
+// ── Field Grid ──
+.field-grid {
+  display: grid;
+  gap: 14px 20px;
+
+  &.g1 {
+    grid-template-columns: 1fr;
+  }
+  &.g2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  &.g3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  &.g4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field-label {
+  font-size: 7pt;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.field-value {
+  font-size: 10.5pt;
+  color: var(--dark);
+  padding-bottom: 5px;
+  border-bottom: 1.5px solid var(--gold);
+  min-height: 24px;
+  display: block;
+}
+
+// ── Project Types ──
+.project-types {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.type-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 10pt;
+  color: var(--muted);
+  background: #fafaf8;
+  transition: all 0.2s ease;
+
+  &.on {
+    border-color: var(--gold);
+    background: var(--gold-pale);
+    color: var(--dark);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(201, 168, 76, 0.2);
+
+    .chip-box {
+      background: var(--gold);
+      border-color: var(--gold);
+      box-shadow: 0 1px 4px rgba(201, 168, 76, 0.3);
+
+      svg {
+        display: block;
+      }
+    }
+
+    .chip-sub {
+      color: var(--gold);
+    }
+  }
+}
+
+.chip-box {
+  width: 17px;
+  height: 17px;
+  border: 2px solid var(--border);
+  border-radius: 3px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  transition: all 0.2s ease;
+
+  svg {
+    display: none;
+  }
+}
+
+.chip-sub {
+  font-size: 8pt;
+  font-weight: 400;
+  color: var(--muted);
+  margin-top: 1px;
+  transition: color 0.2s ease;
+}
+
+// ── Areas Table ──
+.areas-wrap {
+  overflow-x: auto;
+  border-radius: 4px;
+}
+
+.areas-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9pt;
+
+  thead tr {
+    background: linear-gradient(90deg, var(--gold-pale) 0%, #f0ead8 100%);
+  }
+
+  th {
+    padding: 9px 12px;
+    text-align: left;
+    font-size: 7pt;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--mid);
+    border-bottom: 2px solid var(--gold);
+    border-right: 1px solid var(--border);
+    white-space: nowrap;
+
+    &:last-child {
+      border-right: none;
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid var(--border);
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background: #f5f2ea;
+      }
+
+      &:nth-child(even) {
+        background: #faf8f4;
+
+        &:hover {
+          background: #f0ead8;
+        }
+      }
+    }
+
+    td {
+      padding: 9px 12px;
+      color: var(--dark);
+      border-right: 1px solid var(--border);
+      font-size: 9.5pt;
+
+      &:last-child {
+        border-right: none;
+      }
+    }
+  }
+}
+
+.empty-row td {
+  text-align: center;
+  color: #bbb;
+  font-style: italic;
+  padding: 20px !important;
+}
+
+// ── Area Type Badges ──
+.type-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 8pt;
+  font-weight: 600;
+  text-transform: capitalize;
+
+  &.badge-kitchen {
+    background: rgba(201, 168, 76, 0.12);
+    color: #8a6a10;
+    border: 1px solid rgba(201, 168, 76, 0.3);
+  }
+
+  &.badge-bathroom {
+    background: rgba(70, 130, 180, 0.1);
+    color: #2b6cb0;
+    border: 1px solid rgba(70, 130, 180, 0.25);
+  }
+}
+
+// ── Memo ──
+.memo-box {
+  background: var(--gold-pale);
+  border: 1px solid var(--gold-border);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  font-size: 10pt;
+  color: var(--mid);
+  line-height: 1.7;
+  min-height: 70px;
+  white-space: pre-wrap;
+  font-style: italic;
+  transition: border-color 0.2s ease;
+}
+
+// ── Important Info ──
+.info-list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 24px;
+  padding: 0;
+  margin: 0;
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 9.5pt;
+    color: var(--mid);
+    line-height: 1.5;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--dark);
+    }
+  }
+}
+
+.bullet {
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+  box-shadow: 0 1px 3px rgba(201, 168, 76, 0.4);
+}
+
+// ── Signature Row ──
+.sig-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.5fr;
+  gap: 28px;
+  padding: 20px 36px 0;
+}
+
+.sig-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &:hover .sig-line {
+    height: 2px;
+  }
+}
+
+.sig-line {
+  height: 1px;
+  background: var(--dark);
+  margin-bottom: 4px;
+  transition: height 0.2s ease;
+}
+
+.sig-label {
+  font-size: 7.5pt;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+// ── Footer ──
+.pdf-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 36px 24px;
+  margin-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: 8pt;
+  color: var(--muted);
+}
+
+.footer-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 10pt;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+// ── Print Styles ──
+@media print {
+  .body {
+    background: #fff;
+    padding: 0;
+  }
+
+  .page {
+    box-shadow: none;
+    border-radius: 0;
+    max-width: 100%;
+  }
+
+  .pdf-body {
+    padding: 20px 28px;
+    gap: 14px;
+  }
+
+  .pdf-header {
+    padding: 20px 28px;
+  }
+  .sig-row {
+    padding: 16px 28px 0;
+  }
+  .pdf-footer {
+    padding: 10px 28px 14px;
+  }
+
+  // Strip hover effects
+  .type-chip:hover,
+  .areas-table tbody tr:hover,
+  .info-list li:hover,
+  .sig-field:hover .sig-line {
+    background: none;
+    color: inherit;
+  }
+
+  @page {
+    size: A4;
+    margin: 8mm;
+  }
+}
+
+// ── Responsive ──
+@media (max-width: 768px) {
+  .pdf-header {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .header-right {
+    text-align: center;
+  }
+
+  .field-grid {
+    &.g3,
+    &.g4 {
+      grid-template-columns: 1fr;
+    }
+    &.g2 {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .info-list {
+    grid-template-columns: 1fr;
+  }
+
+  .sig-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .pdf-footer {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+}
