@@ -1,0 +1,255 @@
+<div id="pdf-print-template" class="body">
+  <div class="page">
+    <!-- HEADER -->
+    <header class="pdf-header">
+      <div class="header-brand">
+        <svg width="48" height="48" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <g stroke="#C9A84C" stroke-width="10" stroke-linecap="round">
+            <line x1="0" y1="30" x2="120" y2="150" />
+            <line x1="-20" y1="0" x2="100" y2="120" />
+            <line x1="20" y1="-20" x2="140" y2="100" />
+            <line x1="120" y1="30" x2="0" y2="150" />
+            <line x1="140" y1="0" x2="20" y2="120" />
+            <line x1="100" y1="-20" x2="-20" y2="100" />
+          </g>
+        </svg>
+        <div>
+          <div class="brand-name">Lusso Granite</div>
+          <div class="brand-tag">Premium Stone Countertops</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="label">Contact</div>
+        <div class="value">Clarksville, TN &nbsp;·&nbsp; (931) 896-2245</div>
+        <div class="doc-date">{{ today }}</div>
+      </div>
+    </header>
+    <div class="gold-rule"></div>
+
+    <div class="pdf-body">
+      <!-- CUSTOMER INFORMATION -->
+      <div class="section">
+        <div class="section-head">
+          <span class="section-title">Customer Information</span>
+          <span class="section-subtitle">Client details</span>
+        </div>
+        <div class="section-body">
+          <div class="field-grid g3">
+            <div class="field">
+              <span class="field-label">First Name</span>
+              <span class="field-value">{{ formData?.firstName }}</span>
+            </div>
+            <div class="field">
+              <span class="field-label">Last Name</span>
+              <span class="field-value">{{ formData?.lastName }}</span>
+            </div>
+            <div class="field">
+              <span class="field-label">Middle Initial</span>
+              <span class="field-value">{{ formData?.middleInitial }}</span>
+            </div>
+            <div class="field">
+              <span class="field-label">Phone</span>
+              <span class="field-value">{{ formData?.phone }}</span>
+            </div>
+            <div class="field">
+              <span class="field-label">Secondary Phone</span>
+              <span class="field-value">{{ formData?.secondaryPhone }}</span>
+            </div>
+            <div class="field">
+              <span class="field-label">Email Address</span>
+              <span class="field-value">{{ formData?.email }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECT ADDRESS -->
+      <div class="section">
+        <div class="section-head">
+          <span class="section-title">Project Address</span>
+          <span class="section-subtitle">Installation location</span>
+        </div>
+        <div class="section-body address-body">
+          <div class="field-grid g1">
+            <div class="field">
+              <span class="field-label">Street Address</span>
+              <span class="field-value">{{ formData?.streetAddress }}</span>
+            </div>
+          </div>
+          <div class="field-grid g4">
+            <div class="field">
+              <span class="field-label">City</span>
+              <span class="field-value">{{ formData?.city }}</span>
+            </div>
+            <div class="field">
+              <span class="field-label">State</span>
+              <span class="field-value">{{ formData?.state }}</span>
+            </div>
+            <div class="field">
+              <span class="field-label">ZIP Code</span>
+              <span class="field-value">{{ formData?.zipCode }}</span>
+            </div>
+            <div class="field">
+              <span class="field-label">Lot Number</span>
+              <span class="field-value">{{ formData?.lotNumber }}</span>
+            </div>
+          </div>
+          <div class="field-grid g2">
+            <div class="field">
+              <span class="field-label">Subdivision</span>
+              <span class="field-value">{{ formData?.subdivision }}</span>
+            </div>
+            <div class="field">
+              <span class="field-label">Contractor / Builder</span>
+              <span class="field-value">{{ formData?.contractorBuilder }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECT TYPE -->
+      <div class="section">
+        <div class="section-head">
+          <span class="section-title">Project Type</span>
+          <span class="section-subtitle">All selected options</span>
+        </div>
+        <div class="section-body">
+          <div class="project-types">
+            <div
+              *ngFor="let opt of projectTypeOptions"
+              class="type-chip"
+              [class.on]="isProjectTypeSelected(opt.key)"
+            >
+              <div class="chip-box">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                  <path
+                    d="M1.5 5l2.5 2.5L8.5 2"
+                    stroke="#fff"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+              <div>
+                <div>{{ opt.label }}</div>
+                <div class="chip-sub">{{ opt.sub }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECT AREAS TABLE -->
+      <div class="section">
+        <div class="section-head">
+          <span class="section-title">Project Areas</span>
+          <span class="section-subtitle">Countertop specifications per area</span>
+        </div>
+        <div class="areas-wrap">
+          <table class="areas-table">
+            <thead>
+              <tr>
+                <th>Area Type</th>
+                <th>Color / Material</th>
+                <th>Edge Style</th>
+                <th>Sink Type</th>
+                <th>Backsplash</th>
+                <th>Faucet Type</th>
+                <th>Stove Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Empty state -->
+              <tr *ngIf="!hasAreas" class="empty-row">
+                <td colspan="7">No areas added.</td>
+              </tr>
+
+              <!-- Area rows -->
+              <tr *ngFor="let area of formData?.areas">
+                <td>
+                  <span class="type-badge" [ngClass]="getBadgeClass(area.areaType)">
+                    {{ area.areaType }}
+                  </span>
+                </td>
+                <td>{{ getMaterial(area) }}</td>
+                <td>{{ area.edgeStyle }}</td>
+                <td>{{ area.sinkType }}</td>
+                <td>{{ area.backsplashHeight }}</td>
+                <td>{{ area.faucetType }}</td>
+                <td>{{ area.stoveType }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MEMO -->
+      <div class="section">
+        <div class="section-head">
+          <span class="section-title">Project Notes &amp; Memo</span>
+          <span class="section-subtitle">Special instructions for the client</span>
+        </div>
+        <div class="section-body">
+          <div class="memo-box">{{ memo }}</div>
+        </div>
+      </div>
+
+      <!-- IMPORTANT INFORMATION -->
+      <div class="section">
+        <div class="section-head">
+          <span class="section-title">Important Information</span>
+        </div>
+        <div class="section-body">
+          <ul class="info-list">
+            <li>
+              <div class="bullet"></div>
+              <span>We do not seal natural stone</span>
+            </li>
+            <li>
+              <div class="bullet"></div>
+              <span>We do not perform plumbing or electrical work</span>
+            </li>
+            <li>
+              <div class="bullet"></div>
+              <span>Please remove all appliances prior to installation</span>
+            </li>
+            <li>
+              <div class="bullet"></div>
+              <span>50% down payment required upon job approval</span>
+            </li>
+            <li>
+              <div class="bullet"></div>
+              <span>We do not supply plumbing accessories</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- /.pdf-body -->
+
+    <!-- SIGNATURE ROW -->
+    <div class="sig-row">
+      <div class="sig-field">
+        <div class="sig-line"></div>
+        <div class="sig-label">Customer Signature</div>
+      </div>
+      <div class="sig-field">
+        <div class="sig-line"></div>
+        <div class="sig-label">Date</div>
+      </div>
+      <div class="sig-field">
+        <div class="sig-line"></div>
+        <div class="sig-label">Sales Representative</div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="pdf-footer">
+      <span class="footer-logo">Lusso Granite</span>
+      <span>Clarksville, TN &nbsp;·&nbsp; (931) 896-2245</span>
+      <span>Premium Stone Countertops</span>
+    </div>
+  </div>
+  <!-- /.page -->
+</div>

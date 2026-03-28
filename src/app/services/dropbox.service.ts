@@ -1,10 +1,9 @@
-import { Injectable } from '@angular/core';
-import { Dropbox } from 'dropbox';
-import { from, Observable } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { firstValueFrom, from, Observable } from 'rxjs';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { DropboxTokenService } from './token.service';
 
-// Type declarations for html2pdf
 interface Html2PdfOptions {
   margin?: number;
   filename?: string;
@@ -25,94 +24,331 @@ declare const html2pdf: any;
   providedIn: 'root',
 })
 export class DropboxService {
-  private dropbox: Dropbox;
-  private accessToken: string =
-    'sl.u.AGRDWUATIbAnVjCp5jW8oLcs2C87ANdBts-WTybAysToAjc3AVrt-9lZfl6SO9QiObHPfSB9aFuYNNGNKZ9VCjezcV411xw0I1nX8-CgapgQZdKA1gG0Sg16Rt0sWJ844ZyuEVazTNoJhc8O_Z1UBFOcyUamK357jIePvqxxC3Qy-HA2INCIMfPQUCvxKku1PpvXiW5iafIqCEcrwaDDVbbAEjTaAc_21DwSYeeQ5VTstl77BI6aHOUexwH2Zquvaw1oWF-dO-YnWZyUsIv4qHIJpPhdDkAYhELQ0SnyjpKkTDrnaD8xO0kX_O8vw6MWPsYwKRWo2f7EawUQdUgLkr3ItIwodgpe_XQIhL0lqVxMvmGZDIRmoxaOmTeZk3ni0lYfepFFDhyVzUzkvqUAytcL9S4EJkXhFFd5wu45Cezf3c61vOeLQ1bQj2LlO5COvmu2L-1e0AGegDNvCDa7hD8NsfYhBRQKBx9cS6AnCgGaou-iBFBdL9IpqeyDKF5A1B9prmmdXRVpteIhUeRw9BrzeHG88ocSoEhwl8DFKBq9YPTMPAsfcvqy3o97PmLkTlztYoT9mFDesBIw3qVrXwXARmXjcocIGopTJQF8XDspRbbPAhJpjDgQ23RHo7he0jsyj1MeBRea58rGjKsgj-saal5BCNuQFLIDAyYynPfx2phklfxy8BJMroPlluextCle5fn-ydtsPJEgTG7gVcdziru9No9wS8IesKEb7OYbm1E1qBEAMNErQXzPf0yPdPwwhRKTC3mO33e3K3ULk9tvmnIe3Rno326Vt5pVGVcoWWaJE_usPnvjiVh2_m4u0QP9BBXQjNAwaiMNW3Fj3pf0txL44P3HVaJy9V3tlvUIJSNZH-h3ARx9J4w_onRocDvgATngqn7OYudFzf_PM7tX73_FsrxpK14R5h55iENTtlwH8O5F93zhg5jackL2EVwNrwRdD9Ws1PjIk4602LnOaCLmPWh7kt_0rFHz6MCZnQ5u9mzn4idNLDPMnzTXJhujVc0T8Z0jXCQ3Pgktgoz2F2v7GcaevCEjx2gS2_Pf9617ZWLHVKErcQLJENIeVjRh7Rm2gthqypm7874JpQQO1BJxv8FSVg6xlWWLa_p1ivPz7GqatLmkLnVst9Q2iyEgU1bbLm9-ed0-W2VvMz9hmwAaVifiLE3Jt53cG-LNbzYGRu5vxHRK_SUBFnpsvv2Y-gT8SWXeQ8_BAxCJ2Z02rmRBDIzYimWpB1-uqfAhCEbfvme06at4cqM7kthC56i42emO5N1Fabo_dWL9tjxt';
+  private readonly tokenService = inject(DropboxTokenService);
 
-  constructor() {
-    this.dropbox = new Dropbox({ accessToken: this.accessToken });
+  private isAuthFailure(status: number, body: unknown): boolean {
+    if (status === 401) return true;
+    const err = body as { error?: { '.tag'?: string }; error_summary?: string };
+    const summary = err?.error_summary || '';
+    return summary.includes('expired_access_token') || summary.includes('invalid_access_token');
+  }
+
+  private async ensureAccessToken(forceRefresh = false): Promise<string> {
+    if (!forceRefresh) {
+      const existing = this.tokenService.getAccessToken();
+      if (existing) return existing;
+    }
+    await firstValueFrom(this.tokenService.refreshAccessToken());
+    const token = this.tokenService.getAccessToken();
+    if (!token) throw new Error('No Dropbox access token after refresh');
+    return token;
+  }
+
+  private async dropboxUpload(
+    path: string,
+    contents: Blob,
+  ): Promise<{ result: { path_display: string } }> {
+    const token = this.tokenService.getAccessToken();
+    if (!token) throw new Error('No access token');
+
+    const response = await fetch('https://content.dropboxapi.com/2/files/upload', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/octet-stream',
+        'Dropbox-API-Arg': JSON.stringify({
+          path,
+          mode: 'overwrite',
+          autorename: true,
+          mute: false,
+          strict_conflict: false,
+        }),
+      },
+      body: contents,
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw { status: response.status, error: data };
+    }
+    return { result: data as { path_display: string } };
+  }
+
+  private async withTokenRetry<T>(fn: () => Promise<T>): Promise<T> {
+    await this.ensureAccessToken(false);
+    try {
+      return await fn();
+    } catch (e: any) {
+      const status = e?.status;
+      const errBody = e?.error;
+      if (this.isAuthFailure(status, errBody)) {
+        await this.ensureAccessToken(true);
+        return fn();
+      }
+      throw e;
+    }
   }
 
   setAccessToken(token: string) {
-    this.accessToken = token;
-    this.dropbox = new Dropbox({ accessToken: this.accessToken });
+    this.tokenService.setAccessToken(token);
   }
 
-  async generatePDF(elementId: string, filename: string): Promise<Blob> {
-    const element = document.getElementById(elementId);
-    if (!element) throw new Error('Element not found');
+  private readonly desktopRenderWidthPx = 1123;
+  private readonly pdfMarginMm = 10;
+  private readonly canvasScale = 2;
 
-    // 🔥 Select the important table
-    const table = element.querySelector('#special-table') as HTMLElement;
-
-    let originalWidth = '';
-    let originalOverflow = '';
-
-    if (table) {
-      originalWidth = table.style.width;
-      originalOverflow = table.style.overflow;
-
-      // Make sure table expands fully (no scroll inside table)
-      table.style.width = '100%';
-      table.style.overflow = 'visible';
+  async generatePDF(
+    elementId: string,
+    filename: string,
+    formData?: Record<string, unknown>,
+  ): Promise<Blob> {
+    const sourceElement = document.getElementById(elementId);
+    if (!sourceElement) {
+      throw new Error(`PDF template not found: ${elementId}`);
     }
 
-    // Expand scroll container temporarily
-    const originalHeight = element.style.height;
-    const originalOverflowY = element.style.overflowY;
+    const hiddenHost = this.createHiddenHost();
+    const clonedElement = sourceElement.cloneNode(true) as HTMLElement;
+    clonedElement.id = `${elementId}-pdf-clone`;
 
-    element.style.height = 'auto';
-    element.style.overflowY = 'visible';
+    if (formData) {
+      this.populateTemplate(clonedElement, formData);
+    }
 
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    this.syncFormValues(sourceElement, clonedElement);
+    hiddenHost.appendChild(clonedElement);
+    document.body.appendChild(hiddenHost);
 
-    // Capture full content height
-    const canvas = await html2canvas(element, {
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      windowWidth: element.scrollWidth,
-      windowHeight: element.scrollHeight,
+    try {
+      await this.prepareClone(sourceElement, clonedElement);
+
+      const canvas = await html2canvas(clonedElement, {
+        scale: this.canvasScale,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        windowWidth: this.getRenderWidth(sourceElement),
+        width: clonedElement.scrollWidth,
+        height: clonedElement.scrollHeight,
+      });
+
+      return this.buildPdfFromCanvas(canvas, filename);
+    } finally {
+      hiddenHost.remove();
+    }
+  }
+
+  private createHiddenHost(): HTMLDivElement {
+    const hiddenHost = document.createElement('div');
+    hiddenHost.style.position = 'fixed';
+    hiddenHost.style.left = '-100000px';
+    hiddenHost.style.top = '0';
+    hiddenHost.style.width = `${this.desktopRenderWidthPx}px`;
+    hiddenHost.style.pointerEvents = 'none';
+    hiddenHost.style.zIndex = '-1';
+    hiddenHost.style.background = '#ffffff';
+    hiddenHost.style.overflow = 'hidden';
+    hiddenHost.setAttribute('aria-hidden', 'true');
+    return hiddenHost;
+  }
+
+  private async prepareClone(
+    sourceElement: HTMLElement,
+    clonedElement: HTMLElement,
+  ): Promise<void> {
+    const renderWidth = this.getRenderWidth(sourceElement);
+
+    clonedElement.style.width = `${renderWidth}px`;
+    clonedElement.style.minWidth = `${renderWidth}px`;
+    clonedElement.style.maxWidth = `${renderWidth}px`;
+    clonedElement.style.margin = '0';
+    clonedElement.style.transform = 'none';
+
+    this.copyComputedStyles(sourceElement, clonedElement);
+    await this.waitForAssets(clonedElement);
+    await this.waitForLayout();
+  }
+
+  private getRenderWidth(element: HTMLElement): number {
+    return Math.max(
+      this.desktopRenderWidthPx,
+      Math.ceil(
+        element.scrollWidth || element.getBoundingClientRect().width || this.desktopRenderWidthPx,
+      ),
+    );
+  }
+
+  private copyComputedStyles(sourceNode: Element, clonedNode: Element): void {
+    if (!this.hasInlineStyleTarget(sourceNode) || !this.hasInlineStyleTarget(clonedNode)) {
+      return;
+    }
+
+    const computedStyle = window.getComputedStyle(sourceNode);
+    for (const propertyName of Array.from(computedStyle)) {
+      clonedNode.style.setProperty(
+        propertyName,
+        computedStyle.getPropertyValue(propertyName),
+        computedStyle.getPropertyPriority(propertyName),
+      );
+    }
+
+    if (sourceNode instanceof HTMLInputElement) {
+      clonedNode.setAttribute('value', sourceNode.value);
+    }
+
+    if (sourceNode instanceof HTMLTextAreaElement) {
+      clonedNode.textContent = sourceNode.value;
+    }
+
+    if (sourceNode instanceof HTMLSelectElement && clonedNode instanceof HTMLSelectElement) {
+      clonedNode.value = sourceNode.value;
+    }
+
+    if (sourceNode instanceof HTMLCanvasElement && clonedNode instanceof HTMLCanvasElement) {
+      const context = clonedNode.getContext('2d');
+      context?.drawImage(sourceNode, 0, 0);
+    }
+
+    const sourceChildren = Array.from(sourceNode.children);
+    const clonedChildren = Array.from(clonedNode.children);
+
+    for (let index = 0; index < sourceChildren.length; index += 1) {
+      const sourceChild = sourceChildren[index];
+      const clonedChild = clonedChildren[index];
+
+      if (!sourceChild || !clonedChild) {
+        continue;
+      }
+
+      this.copyComputedStyles(sourceChild, clonedChild);
+    }
+  }
+
+  private hasInlineStyleTarget(node: Element): node is Element & ElementCSSInlineStyle {
+    return 'style' in node;
+  }
+
+  private syncFormValues(sourceElement: HTMLElement, clonedElement: HTMLElement): void {
+    const sourceInputs = sourceElement.querySelectorAll<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >('input, textarea, select');
+    const clonedInputs = clonedElement.querySelectorAll<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >('input, textarea, select');
+
+    sourceInputs.forEach((sourceInput, index) => {
+      const clonedInput = clonedInputs[index];
+      if (!clonedInput) {
+        return;
+      }
+
+      if (sourceInput instanceof HTMLInputElement && clonedInput instanceof HTMLInputElement) {
+        clonedInput.value = sourceInput.value;
+        clonedInput.checked = sourceInput.checked;
+      }
+
+      if (
+        sourceInput instanceof HTMLTextAreaElement &&
+        clonedInput instanceof HTMLTextAreaElement
+      ) {
+        clonedInput.value = sourceInput.value;
+      }
+
+      if (sourceInput instanceof HTMLSelectElement && clonedInput instanceof HTMLSelectElement) {
+        clonedInput.value = sourceInput.value;
+      }
     });
+  }
 
-    const imgData = canvas.toDataURL('image/jpeg', 1.0);
+  private async waitForAssets(element: HTMLElement): Promise<void> {
+    const fontsReady =
+      'fonts' in document ? (document.fonts.ready as Promise<FontFaceSet>) : Promise.resolve();
+    const images = Array.from(element.querySelectorAll<HTMLImageElement>('img'));
 
+    await Promise.all([
+      fontsReady,
+      ...images.map(
+        (image) =>
+          new Promise<void>((resolve) => {
+            if (image.complete) {
+              resolve();
+              return;
+            }
+
+            image.addEventListener('load', () => resolve(), { once: true });
+            image.addEventListener('error', () => resolve(), { once: true });
+          }),
+      ),
+    ]);
+  }
+
+  private async waitForLayout(): Promise<void> {
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+  }
+
+  private buildPdfFromCanvas(canvas: HTMLCanvasElement, filename: string): Blob {
+    const orientation = canvas.width >= canvas.height ? 'landscape' : 'portrait';
     const pdf = new jsPDF({
-      orientation: 'portrait',
+      orientation,
       unit: 'mm',
       format: 'a4',
+      compress: true,
     });
 
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = pdf.internal.pageSize.getHeight();
+    pdf.setProperties({
+      title: filename,
+    });
 
-    const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+    const pageWidthMm = pdf.internal.pageSize.getWidth();
+    const pageHeightMm = pdf.internal.pageSize.getHeight();
+    const usableWidthMm = pageWidthMm - this.pdfMarginMm * 2;
+    const usableHeightMm = pageHeightMm - this.pdfMarginMm * 2;
+    const widthScale = usableWidthMm / canvas.width;
+    const heightScale = usableHeightMm / canvas.height;
+    const fitScale = Math.min(widthScale, heightScale);
+    const renderedWidthMm = canvas.width * fitScale;
+    const renderedHeightMm = canvas.height * fitScale;
+    const offsetX = this.pdfMarginMm + (usableWidthMm - renderedWidthMm) / 2;
+    const offsetY = this.pdfMarginMm + (usableHeightMm - renderedHeightMm) / 2;
 
-    let heightLeft = imgHeight;
-    let position = 0;
-
-    // First page
-    pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
-    heightLeft -= pdfHeight;
-
-    // Additional pages
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
-      heightLeft -= pdfHeight;
-    }
-
-    // 🔥 Restore original layout
-    element.style.height = originalHeight;
-    element.style.overflowY = originalOverflowY;
-
-    if (table) {
-      table.style.width = originalWidth;
-      table.style.overflow = originalOverflow;
-    }
+    pdf.addImage(
+      canvas.toDataURL('image/png'),
+      'PNG',
+      offsetX,
+      offsetY,
+      renderedWidthMm,
+      renderedHeightMm,
+      undefined,
+      'FAST',
+    );
 
     return pdf.output('blob');
+  }
+
+  private populateTemplate(template: HTMLElement, formData: Record<string, unknown>): void {
+    const fieldElements = template.querySelectorAll<HTMLElement>('[data-field]');
+    fieldElements.forEach((element) => {
+      const fieldName = element.dataset['field'];
+      if (!fieldName) {
+        return;
+      }
+
+      const value = formData[fieldName];
+      element.textContent = value == null || value === '' ? '-' : String(value);
+    });
+
+    const dateElement = template.querySelector<HTMLElement>('#pdf-date');
+    if (dateElement) {
+      dateElement.textContent = new Date().toLocaleDateString();
+    }
+
+    const memoElement = template.querySelector<HTMLElement>('#pdf-client-memo');
+    if (memoElement) {
+      const memo = typeof formData['memo'] === 'string' ? formData['memo'].trim() : '';
+      memoElement.textContent = memo || 'No notes provided.';
+    }
   }
 
   uploadToDropbox(
@@ -121,37 +357,28 @@ export class DropboxService {
     folderPath: string = '/submissions',
   ): Observable<any> {
     const path = `${folderPath}/${filename}`;
-
-    return from(
-      this.dropbox.filesUpload({
-        path: path,
-        contents: pdfBlob,
-        mode: { '.tag': 'overwrite' } as any,
-        autorename: true,
-      }),
-    );
+    return from(this.withTokenRetry(() => this.dropboxUpload(path, pdfBlob)));
   }
 
-  async generateAndUploadPDF(elementId: string, customerName: string): Promise<string> {
+  async generateAndUploadPDF(
+    elementId: string,
+    customerName: string,
+    formData?: any,
+  ): Promise<string> {
     try {
-      // Generate timestamp and filename
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const sanitizedName = customerName.replace(/[^a-zA-Z0-9]/g, '_');
-      const filename = `LussoGranite_Form_${sanitizedName}_${timestamp}.pdf`;
+      const filename = `${sanitizedName}_Quote_${timestamp}.pdf`;
 
-      // Generate PDF from the print-container (which has all form content)
-      const pdfBlob = await this.generatePDF('print-container', filename);
+      const pdfBlob = await this.generatePDF(elementId, filename, formData);
 
-      // Upload to Dropbox
-      const uploadResult = await this.uploadToDropbox(pdfBlob, filename).toPromise();
+      const uploadResult: any = await this.withTokenRetry(() =>
+        this.dropboxUpload(`/submissions/${filename}`, pdfBlob),
+      );
 
       console.log('File uploaded successfully:', uploadResult.result.path_display);
 
-      // Return the Dropbox file URL (direct link to file)
-      // Format: https://www.dropbox.com/home/path/to/file
-      const dropboxUrl = `https://www.dropbox.com/home${uploadResult.result.path_display}`;
-
-      return dropboxUrl;
+      return `https://www.dropbox.com/home${uploadResult.result.path_display}`;
     } catch (error: any) {
       console.error('Error generating and uploading PDF:', error);
       throw error;
@@ -160,13 +387,42 @@ export class DropboxService {
 
   createShareLink(filePath: string): Observable<any> {
     return from(
-      this.dropbox.sharingCreateSharedLink({
-        path: filePath,
+      this.withTokenRetry(async () => {
+        const token = this.tokenService.getAccessToken()!;
+        const response = await fetch(
+          'https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings',
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ path: filePath }),
+          },
+        );
+        const data = await response.json();
+        if (!response.ok) throw { status: response.status, error: data };
+        return data;
       }),
     );
   }
 
   listFiles(folderPath: string = '/submissions'): Observable<any> {
-    return from(this.dropbox.filesListFolder({ path: folderPath }));
+    return from(
+      this.withTokenRetry(async () => {
+        const token = this.tokenService.getAccessToken()!;
+        const response = await fetch('https://api.dropboxapi.com/2/files/list_folder', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ path: folderPath }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw { status: response.status, error: data };
+        return data;
+      }),
+    );
   }
 }
