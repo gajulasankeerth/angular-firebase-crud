@@ -112,6 +112,31 @@
   justify-content: center;
 }
 
+.form-action-disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.form-action-disabled:hover {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+.action-disabled-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(107, 114, 128, 0.12);
+  color: #6b7280;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 /* Remove button placed in top-right corner of each area card */
 .area-remove-btn {
   position: absolute;
@@ -326,48 +351,150 @@ table tbody tr:nth-child(odd):hover {
   print-color-adjust: exact !important;
 
   .print-doc-header {
-    margin-bottom: 1.25rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 2px solid #111827;
+    margin-bottom: 0.8rem;
+    padding: 0.7rem 0.85rem 0.8rem;
+    border: 1px solid #d6d3d1;
+    border-radius: 0.75rem;
+    background:
+      linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(255, 255, 255, 0.96) 38%),
+      linear-gradient(180deg, #ffffff, #faf8f4);
     page-break-after: avoid;
     break-after: avoid;
+  }
+
+  .print-doc-header * {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .print-doc-header > div {
+    min-height: 0 !important;
+  }
+
+  .print-doc-header__top {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.7rem;
+    align-items: flex-start;
   }
 
   .print-doc-header__brand {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.3rem;
+  }
+
+  .print-doc-header__eyebrow {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: #a16207;
   }
 
   .print-doc-header__title {
-    font-size: 1.375rem;
+    font-size: 1.28rem;
     font-weight: 700;
     color: #111827;
     letter-spacing: -0.02em;
   }
 
   .print-doc-header__subtitle {
-    font-size: 0.875rem;
-    color: #4b5563;
+    font-size: 0.74rem;
+    color: #57534e;
     font-weight: 500;
+    max-width: 30rem;
   }
 
-  .print-doc-header__meta {
-    margin-top: 0.5rem;
-    font-size: 0.75rem;
-    color: #6b7280;
+  .print-doc-header__contact-line {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.2rem !important;
+    font-size: 0.64rem;
+    color: #44403c;
+    font-weight: 500;
+    flex-wrap: wrap;
+  }
+
+  .print-doc-header__dot {
+    color: #a16207;
+    line-height: 1;
+  }
+
+  .print-doc-header__stamp {
+    min-width: 9.5rem;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid #e7e5e4;
+    border-radius: 0.7rem;
+    background: rgba(255, 255, 255, 0.88);
+    text-align: right;
+  }
+
+  .print-doc-header__stamp-label,
+  .print-doc-header__meta-label {
+    font-size: 0.56rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #78716c;
+  }
+
+  .print-doc-header__stamp-value,
+  .print-doc-header__meta-value {
+    display: block;
+    margin-top: 0.18rem;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: #1f2937;
+    line-height: 1.35;
+  }
+
+  .print-doc-header__meta-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.45rem;
+    margin-top: 0.65rem;
+    align-items: start;
+  }
+
+  .print-doc-header__meta-card {
+    padding: 0.45rem 0.55rem;
+    border-radius: 0.7rem;
+    border: 1px solid #ece7df;
+    background: rgba(255, 255, 255, 0.84);
   }
 
   /* Section cards: keep block together when reasonable */
   .print-form-section {
     page-break-inside: avoid;
     break-inside: avoid;
-    margin-bottom: 1rem;
-    padding: 1rem 1.125rem !important;
+    margin-bottom: 0.55rem;
+    padding: 0.7rem 0.8rem !important;
     border: 1px solid #e5e7eb !important;
-    border-radius: 0.25rem !important;
+    border-radius: 0.75rem !important;
     box-shadow: none !important;
-    background: #fff !important;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.98),
+      rgba(249, 250, 251, 0.98)
+    ) !important;
+    position: relative;
+  }
+
+  .print-form-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 1.1rem;
+    right: 1.1rem;
+    height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #c9971a, rgba(201, 151, 26, 0.15));
+  }
+
+  .print-doc-header + .print-form-container {
+    margin-top: 0 !important;
   }
 
   /* Table section may span pages; allow breaks between rows */
@@ -388,20 +515,31 @@ table tbody tr:nth-child(odd):hover {
   }
 
   h3 {
-    font-size: 1.125rem !important;
+    font-size: 0.98rem !important;
     line-height: 1.3 !important;
-    margin-bottom: 0.5rem !important;
+    margin-bottom: 0.2rem !important;
     color: #111827 !important;
   }
 
   .print-form-section > .mb-8 > p.text-base {
-    font-size: 0.8125rem !important;
-    color: #4b5563 !important;
-    margin-bottom: 0.5rem !important;
+    font-size: 0.7rem !important;
+    color: #57534e !important;
+    margin-bottom: 0.35rem !important;
+  }
+
+  .print-form-section > .mb-8 {
+    margin-bottom: 0.65rem !important;
+  }
+
+  .print-form-section > .mb-8 > div:last-child {
+    width: 3.1rem !important;
+    height: 0.14rem !important;
+    border-radius: 999px !important;
+    background: linear-gradient(90deg, #c9971a, #ead7a2) !important;
   }
 
   label {
-    font-size: 0.75rem !important;
+    font-size: 0.66rem !important;
     font-weight: 600 !important;
     color: #374151 !important;
     margin-bottom: 0.25rem !important;
@@ -412,14 +550,14 @@ table tbody tr:nth-child(odd):hover {
   input[type='tel'],
   select,
   textarea {
-    font-size: 0.8125rem !important;
-    line-height: 1.45 !important;
+    font-size: 0.72rem !important;
+    line-height: 1.3 !important;
     color: #111827 !important;
     border: 1px solid #d1d5db !important;
     border-radius: 0.25rem !important;
     background: #f9fafb !important;
-    padding: 0.35rem 0.5rem !important;
-    min-height: 2rem !important;
+    padding: 0.22rem 0.38rem !important;
+    min-height: 1.55rem !important;
     width: 100% !important;
     max-width: 100% !important;
     white-space: normal !important;
@@ -427,8 +565,16 @@ table tbody tr:nth-child(odd):hover {
   }
 
   textarea {
-    min-height: 6rem !important;
+    min-height: 3.2rem !important;
     resize: none !important;
+  }
+
+  input[type='text'],
+  input[type='email'],
+  input[type='tel'],
+  select,
+  textarea {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75) !important;
   }
 
   /* Grid: stable print columns */
@@ -452,16 +598,18 @@ table tbody tr:nth-child(odd):hover {
   /* Customer + project address: two columns on wide print */
   .print-section-customer,
   .print-section-project {
-    display: inline-block !important;
-    vertical-align: top !important;
-    width: 49% !important;
-    margin-right: 1% !important;
+    display: block !important;
+    float: none !important;
+    width: 100% !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
     box-sizing: border-box !important;
+    page-break-after: avoid !important;
   }
 
   .print-section-project {
     margin-right: 0 !important;
-    margin-left: 1% !important;
+    margin-left: 0 !important;
   }
 
   .print-clearfix {
@@ -473,12 +621,12 @@ table tbody tr:nth-child(odd):hover {
   /* Project type cards */
   .print-project-type-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 0.5rem !important;
+    gap: 0.3rem !important;
   }
 
   .print-section-project-type label {
     border: 1px solid #d1d5db !important;
-    padding: 0.5rem 0.625rem !important;
+    padding: 0.35rem 0.45rem !important;
     page-break-inside: avoid;
     break-inside: avoid;
   }
@@ -494,7 +642,9 @@ table tbody tr:nth-child(odd):hover {
   .print-table-scroll {
     overflow: visible !important;
     max-width: 100% !important;
-    border: 1px solid #9ca3af !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 0.7rem !important;
+    background: #fff !important;
   }
 
   .print-areas-table {
@@ -502,7 +652,7 @@ table tbody tr:nth-child(odd):hover {
     min-width: 0 !important;
     table-layout: fixed !important;
     border-collapse: collapse !important;
-    font-size: 0.6875rem !important;
+    font-size: 0.62rem !important;
   }
 
   .print-areas-table thead {
@@ -518,20 +668,37 @@ table tbody tr:nth-child(odd):hover {
     white-space: normal !important;
     word-break: break-word !important;
     vertical-align: top !important;
-    padding: 0.4rem 0.45rem !important;
-    border: 1px solid #9ca3af !important;
+    padding: 0.3rem 0.35rem !important;
+    border: 1px solid #d1d5db !important;
   }
 
   .print-areas-table th {
-    background: #f3f4f6 !important;
+    background: linear-gradient(180deg, #f7f4ec, #efe6ce) !important;
     font-weight: 700 !important;
     text-transform: uppercase;
     letter-spacing: 0.04em;
+    color: #44403c !important;
   }
 
   .print-areas-table tr {
     page-break-inside: avoid;
     break-inside: avoid;
+  }
+
+  .print-areas-table tbody tr:nth-child(even) td {
+    background: #fcfcfb !important;
+  }
+
+  .print-areas-table td:first-child {
+    font-weight: 600 !important;
+    color: #1f2937 !important;
+  }
+
+  .print-section-note {
+    margin-bottom: 0.35rem;
+    font-size: 0.66rem;
+    color: #57534e;
+    line-height: 1.5;
   }
 
   /* Client memo */
@@ -542,14 +709,14 @@ table tbody tr:nth-child(odd):hover {
   .client-memo-print {
     display: block !important;
     white-space: pre-wrap !important;
-    font-size: 0.8125rem !important;
-    line-height: 1.5 !important;
+    font-size: 0.72rem !important;
+    line-height: 1.35 !important;
     color: #111827 !important;
     border: 1px solid #d1d5db !important;
-    border-radius: 0.25rem !important;
-    padding: 0.75rem !important;
-    min-height: 5rem !important;
-    background: #fff !important;
+    border-radius: 0.7rem !important;
+    padding: 0.5rem 0.65rem !important;
+    min-height: 2.5rem !important;
+    background: linear-gradient(180deg, #ffffff, #fafaf9) !important;
   }
 
   .project-notes-section .flex.items-start.gap-3.mb-4 svg,
@@ -558,9 +725,16 @@ table tbody tr:nth-child(odd):hover {
   }
 
   .important-info-section ul li {
-    font-size: 0.8125rem !important;
-    line-height: 1.45 !important;
+    font-size: 0.68rem !important;
+    line-height: 1.25 !important;
     color: #374151 !important;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid #f0ece3;
+  }
+
+  .important-info-section ul li:last-child {
+    border-bottom: 0 !important;
+    padding-bottom: 0 !important;
   }
 
   /* Hide field validation hints in print */
@@ -573,18 +747,34 @@ table tbody tr:nth-child(odd):hover {
     max-width: 100% !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
-    padding-top: 0.5rem !important;
+    padding-top: 0.2rem !important;
   }
 
   form.print-form-container {
-    gap: 0.75rem !important;
+    gap: 0.4rem !important;
+  }
+
+  @media (max-width: 900px) {
+    .print-doc-header__top,
+    .print-doc-header__meta-grid {
+      display: block !important;
+    }
+
+    .print-doc-header__stamp {
+      margin-top: 0.8rem;
+      text-align: left;
+    }
+
+    .print-doc-header__meta-card {
+      margin-top: 0.6rem;
+    }
   }
 }
 
 @media print {
   @page {
     size: letter;
-    margin: 12mm;
+    margin: 8mm;
   }
 
   * {
