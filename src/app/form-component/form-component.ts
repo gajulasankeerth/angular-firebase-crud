@@ -21,6 +21,8 @@ import { PdfTemplateComponent } from '../components/pdf-template/pdf-template.co
   styleUrl: './form-component.scss',
 })
 export class FormComponent {
+  isFormError = false;
+  showValidationError = false;
   private fb = inject(FormBuilder);
   private formService = inject(FormRequestService);
   private dropboxService = inject(DropboxService);
@@ -122,7 +124,6 @@ export class FormComponent {
         .generateAndUploadPDF('pdf-print-template', customerName)
         .then((dropboxUrl) => {
           this.dropboxLink = dropboxUrl;
-          console.log('PDF uploaded to Dropbox:', dropboxUrl);
 
           // Show success toaster
           this.displaySuccessToaster('File saved successfully to Dropbox!');
@@ -154,7 +155,14 @@ export class FormComponent {
           console.error('Form submission error:', error);
         });
     } else {
+      // Show validation error message
+      this.showValidationError = true;
       this.consultationForm.markAllAsTouched();
+
+      // Auto-hide validation error after 5 seconds
+      setTimeout(() => {
+        this.showValidationError = false;
+      }, 5000);
     }
   }
 

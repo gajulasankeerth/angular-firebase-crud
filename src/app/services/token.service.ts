@@ -5,9 +5,9 @@ import { map, Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class DropboxTokenService {
   private accessToken: string | null = null;
-  private refreshToken = 'uMVFWIyoGbIAAAAAAAAAAR68Iu3zmrCYAKBnpg8Oodby8kSnwtS-EX62TS8Swf6b';
-  private clientId = 'zshzkdj6kvu8n5z';
-  private clientSecret = 'bn1k00781pb5gd0';
+  private refreshToken = 'vhIMbPX5yz4AAAAAAAAAAfViO3aScJrC26HWArgT65xlUw8JYw1yNhdtTbhWyG8S';
+  private clientId = 'q4qnq7t7c76inr8';
+  private clientSecret = 'w05t17akkmx20vz';
 
   constructor(private http: HttpClient) {}
 

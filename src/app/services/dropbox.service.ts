@@ -354,7 +354,7 @@ export class DropboxService {
   uploadToDropbox(
     pdfBlob: Blob,
     filename: string,
-    folderPath: string = '/submissions',
+    folderPath: string = '/online-form-submissions',
   ): Observable<any> {
     const path = `${folderPath}/${filename}`;
     return from(this.withTokenRetry(() => this.dropboxUpload(path, pdfBlob)));
@@ -373,7 +373,7 @@ export class DropboxService {
       const pdfBlob = await this.generatePDF(elementId, filename, formData);
 
       const uploadResult: any = await this.withTokenRetry(() =>
-        this.dropboxUpload(`/submissions/${filename}`, pdfBlob),
+        this.dropboxUpload(`/online-form-submissions/${filename}`, pdfBlob),
       );
 
       console.log('File uploaded successfully:', uploadResult.result.path_display);
@@ -407,7 +407,7 @@ export class DropboxService {
     );
   }
 
-  listFiles(folderPath: string = '/submissions'): Observable<any> {
+  listFiles(folderPath: string = '/online-form-submissions'): Observable<any> {
     return from(
       this.withTokenRetry(async () => {
         const token = this.tokenService.getAccessToken()!;
