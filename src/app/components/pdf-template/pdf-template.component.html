@@ -168,9 +168,7 @@
               <!-- Area rows -->
               <tr *ngFor="let area of formData?.areas">
                 <td>
-                  <span class="type-badge" [ngClass]="getBadgeClass(area.areaType)">
-                    {{ area.areaType }}
-                  </span>
+                  {{ area.areaType }}
                 </td>
                 <td>{{ getMaterial(area) }}</td>
                 <td>{{ area.edgeStyle }}</td>

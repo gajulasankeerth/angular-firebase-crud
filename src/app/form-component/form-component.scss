@@ -632,6 +632,9 @@ table tbody tr:nth-child(odd):hover {
   }
 
   input[type='checkbox'] {
+    -webkit-appearance: checkbox !important;
+    -moz-appearance: checkbox !important;
+    appearance: checkbox !important;
     width: 0.875rem !important;
     height: 0.875rem !important;
     accent-color: #b8860b !important;
@@ -1050,5 +1053,55 @@ table tbody tr:nth-child(odd):hover {
     border: 2px dashed #d1d5db !important;
     border-radius: 0.5rem !important;
     background: #f9fafb !important;
+  }
+}
+
+/* Custom Checkbox Reset for Windows Chrome and other browsers */
+input[type='checkbox'] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: #ffffff;
+  border: 2px solid #d1d5db; /* border-gray-300 */
+  border-radius: 0.25rem; /* rounded */
+  width: 1.25rem;
+  height: 1.25rem;
+  display: inline-grid;
+  place-content: center;
+  vertical-align: middle;
+  position: relative;
+  cursor: pointer;
+  outline: none !important;
+  box-shadow: none !important; /* Eliminate default browser/OS shadows */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+
+  &::before {
+    content: "";
+    width: 0.625rem;
+    height: 0.625rem;
+    transform: scale(0);
+    transition: 120ms transform cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: #ffffff;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  }
+
+  &:checked {
+    background-color: #d4af37; /* text-gold */
+    border-color: #d4af37;
+
+    &::before {
+      transform: scale(1);
+    }
+  }
+
+  &:focus {
+    border-color: #d4af37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2) !important; /* Premium focus ring without default shadow */
+    outline: none !important;
+  }
+
+  &:hover {
+    border-color: #d4af37;
   }
 }
