@@ -1,12 +1,12 @@
 <div class="min-h-screen bg-cream selection:bg-amber-100 selection:text-amber-900 no-print">
   <!-- Header -->
   <header class="bg-white/95 backdrop-blur-md sticky top-0 z-40 border-b border-stone-200/80 shadow-xs no-print">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <!-- Logo and Company Name -->
-        <div class="flex items-center gap-3.5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-3.5">
+      <div class="flex items-center justify-between">
+        <!-- Logo and Company Name side by side -->
+        <div class="flex flex-row items-center gap-2.5 sm:gap-3 shrink-0">
           <div
-            class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-50 to-stone-100 border border-amber-200/70 flex items-center justify-center p-1.5 shadow-xs">
+            class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-amber-50 to-stone-100 border border-amber-200/70 flex items-center justify-center p-1.5 shadow-xs shrink-0">
             <svg class="w-full h-full" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
               <g stroke="#D4AF37" stroke-width="10" stroke-linecap="round">
                 <line x1="0" y1="30" x2="120" y2="150" />
@@ -19,17 +19,15 @@
             </svg>
           </div>
 
-          <div>
-            <div class="flex items-center gap-2">
-              <h1 class="text-xl font-bold tracking-tight text-gray-950">Lusso Granite</h1>
-            </div>
-            <p class="text-xs text-stone-500 font-medium">Artisanal Stone Fabrication & Installation</p>
+          <div class="flex flex-col justify-center">
+            <h1 class="text-base sm:text-xl font-bold tracking-tight text-gray-950 leading-tight whitespace-nowrap">Lusso Granite</h1>
+            <p class="text-xs text-stone-500 font-medium hidden sm:block">Artisanal Stone Fabrication &amp; Installation</p>
           </div>
         </div>
 
-        <!-- Contact & Portal Actions -->
-        <div class="flex items-center gap-3 sm:gap-4 w-full sm:w-auto justify-between sm:justify-end text-xs">
-          <div class="hidden sm:flex items-center gap-1.5 text-stone-600 font-medium">
+        <!-- Contact & Actions (hidden on mobile, visible on sm+) -->
+        <div class="hidden sm:flex items-center gap-3 sm:gap-4 text-xs">
+          <div class="hidden md:flex items-center gap-1.5 text-stone-600 font-medium">
             <svg class="w-3.5 h-3.5 text-gold shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
