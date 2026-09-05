@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, ViewChild, inject } from '@angular/core';
 import { FormRequestService } from '../services/form-request-service';
 import { DropboxService } from '../services/dropbox.service';
 import {
@@ -20,7 +20,7 @@ import { PdfTemplateComponent } from '../components/pdf-template/pdf-template.co
   templateUrl: './form-component.html',
   styleUrl: './form-component.scss',
 })
-export class FormComponent {
+export class FormComponent implements AfterViewInit {
   isFormError = false;
   showValidationError = false;
   private fb = inject(FormBuilder);
@@ -41,6 +41,14 @@ export class FormComponent {
   isUploadingToDropbox = false;
   showSuccessToaster = false;
   successToasterMessage = '';
+
+  // Signature Pad
+  @ViewChild('signatureCanvas') signatureCanvasRef!: ElementRef<HTMLCanvasElement>;
+  private canvasCtx: CanvasRenderingContext2D | null = null;
+  isDrawing = false;
+  hasSignature = false;
+  signatureDataUrl = '';
+  signatureDate: Date | null = null;
 
   // Modal properties
   predefinedColors = [
@@ -78,9 +86,131 @@ export class FormComponent {
       projectTypes: this.fb.array([], FormComponent.atLeastOneItem),
       areas: this.fb.array([], FormComponent.atLeastOneAreaFilled),
       clientMemo: [''],
+      termsAccepted: [false],
+      signature: [''],
     });
     // Don't add empty area by default - user will add via modal
     this.areaForm = this.createArea();
+  }
+
+  ngAfterViewInit(): void {
+    // Delay canvas initialization to ensure view layout is fully rendered
+    setTimeout(() => {
+      this.initSignatureCanvas();
+    }, 150);
+  }
+
+  initSignatureCanvas(): void {
+    if (!this.signatureCanvasRef) return;
+    const canvas = this.signatureCanvasRef.nativeElement;
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width === 0) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+
+    this.canvasCtx = canvas.getContext('2d');
+    if (this.canvasCtx) {
+      this.canvasCtx.scale(dpr, dpr);
+      this.canvasCtx.strokeStyle = '#1c1917';
+      this.canvasCtx.lineWidth = 2.5;
+      this.canvasCtx.lineCap = 'round';
+      this.canvasCtx.lineJoin = 'round';
+    }
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    if (this.hasSignature && this.signatureDataUrl) {
+      const savedData = this.signatureDataUrl;
+      const img = new Image();
+      img.onload = () => {
+        this.initSignatureCanvas();
+        if (this.canvasCtx && this.signatureCanvasRef) {
+          const rect = this.signatureCanvasRef.nativeElement.getBoundingClientRect();
+          this.canvasCtx.drawImage(img, 0, 0, rect.width, rect.height);
+          this.hasSignature = true;
+          this.signatureDataUrl = savedData;
+        }
+      };
+      img.src = savedData;
+    } else {
+      this.initSignatureCanvas();
+    }
+  }
+
+  startDrawing(event: MouseEvent | TouchEvent): void {
+    event.preventDefault();
+    if (!this.canvasCtx || !this.signatureCanvasRef) return;
+    this.isDrawing = true;
+    const coords = this.getCanvasCoordinates(event);
+    this.canvasCtx.beginPath();
+    this.canvasCtx.moveTo(coords.x, coords.y);
+  }
+
+  draw(event: MouseEvent | TouchEvent): void {
+    if (!this.isDrawing || !this.canvasCtx) return;
+    event.preventDefault();
+    const coords = this.getCanvasCoordinates(event);
+    this.canvasCtx.lineTo(coords.x, coords.y);
+    this.canvasCtx.stroke();
+  }
+
+  stopDrawing(): void {
+    if (!this.isDrawing) return;
+    this.isDrawing = false;
+    if (this.signatureCanvasRef) {
+      this.hasSignature = true;
+      this.signatureDate = new Date();
+      this.signatureDataUrl = this.signatureCanvasRef.nativeElement.toDataURL('image/png');
+      this.consultationForm.patchValue({ signature: this.signatureDataUrl });
+    }
+  }
+
+  clearSignature(): void {
+    if (!this.signatureCanvasRef || !this.canvasCtx) return;
+    const canvas = this.signatureCanvasRef.nativeElement;
+    const rect = canvas.getBoundingClientRect();
+    this.canvasCtx.clearRect(0, 0, rect.width, rect.height);
+    this.hasSignature = false;
+    this.signatureDataUrl = '';
+    this.signatureDate = null;
+    this.consultationForm.patchValue({ signature: '' });
+  }
+
+  private getCanvasCoordinates(event: MouseEvent | TouchEvent): { x: number; y: number } {
+    const canvas = this.signatureCanvasRef.nativeElement;
+    const rect = canvas.getBoundingClientRect();
+    let clientX = 0;
+    let clientY = 0;
+    if ('touches' in event && event.touches.length > 0) {
+      clientX = event.touches[0].clientX;
+      clientY = event.touches[0].clientY;
+    } else if (event instanceof MouseEvent) {
+      clientX = event.clientX;
+      clientY = event.clientY;
+    }
+    return {
+      x: clientX - rect.left,
+      y: clientY - rect.top,
+    };
+  }
+
+  getPdfFormData(): any {
+    const sigDate = this.signatureDate || new Date();
+    const formattedDate = sigDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+    return {
+      ...this.consultationForm.getRawValue(),
+      projectTypes: this.projectTypes.value,
+      areas: this.areas.value,
+      signature: this.signatureDataUrl,
+      signatureDate: formattedDate,
+    };
   }
 
   onProjectTypeChange(type: string, event: Event) {
@@ -116,6 +246,12 @@ export class FormComponent {
         ...this.consultationForm.value,
         projectTypes: this.projectTypes.value,
         areas: this.areas.value, // 🔥 FIX IS HERE
+        signature: this.signatureDataUrl,
+        signatureDate: (this.signatureDate || new Date()).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        }),
       };
 
       // Generate and upload PDF to Dropbox
@@ -139,9 +275,10 @@ export class FormComponent {
           this.isSubmitting = false;
           this.isUploadingToDropbox = false;
 
-          // reset form and clear areas
+          // reset form, signature, and clear areas
           this.consultationForm.reset();
           this.areas.clear();
+          this.clearSignature();
 
           setTimeout(() => {
             this.submitSuccess = false;
@@ -159,11 +296,26 @@ export class FormComponent {
       this.showValidationError = true;
       this.consultationForm.markAllAsTouched();
 
-      // Auto-hide validation error after 5 seconds
+      // Smooth scroll to first invalid field
+      setTimeout(() => {
+        const firstInvalid = document.querySelector(
+          '.has-error, input.ng-invalid, select.ng-invalid, textarea.ng-invalid, .form-field-error'
+        );
+        if (firstInvalid) {
+          firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          (firstInvalid as HTMLElement).focus?.();
+        }
+      }, 80);
+
+      // Auto-hide validation error after 6 seconds
       setTimeout(() => {
         this.showValidationError = false;
-      }, 5000);
+      }, 6000);
     }
+  }
+
+  dismissValidationError() {
+    this.showValidationError = false;
   }
 
   get areas(): FormArray {
@@ -200,25 +352,6 @@ export class FormComponent {
 
   printForm(): void {
     window.print();
-  }
-
-  printBackupTable(): void {
-    const printContainer = document.getElementById('print-container');
-    if (printContainer) {
-      // Add backup print mode class
-      printContainer.classList.add('backup-print-mode');
-
-      // Scroll to top
-      window.scrollTo(0, 0);
-
-      // Print
-      window.print();
-
-      // Remove backup print mode class after printing
-      setTimeout(() => {
-        printContainer.classList.remove('backup-print-mode');
-      }, 100);
-    }
   }
 
   openAreaModal(index?: number) {
@@ -276,6 +409,15 @@ export class FormComponent {
 
   getAreaValue(index: number, field: string): string {
     const area = this.areas.at(index);
+    if (!area) return '-';
+    if (field === 'colorMaterial') {
+      const color = area.get('colorMaterial')?.value;
+      if (color === 'Other') {
+        const custom = area.get('customColorMaterial')?.value;
+        return custom ? custom : 'Other';
+      }
+      return color || '-';
+    }
     return area.get(field)?.value || '-';
   }
 
