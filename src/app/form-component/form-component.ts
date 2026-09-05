@@ -255,9 +255,10 @@ export class FormComponent implements AfterViewInit {
       };
 
       // Generate and upload PDF to Dropbox
-      const customerName = `${formData.firstName} ${formData.lastName}`;
+      const customerName = `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || 'Customer';
+      const pdfData = this.getPdfFormData();
       this.dropboxService
-        .generateAndUploadPDF('pdf-print-template', customerName)
+        .generateAndUploadPDF('pdf-print-template', customerName, pdfData)
         .then((dropboxUrl) => {
           this.dropboxLink = dropboxUrl;
 
