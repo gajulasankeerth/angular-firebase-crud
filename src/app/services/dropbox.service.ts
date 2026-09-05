@@ -93,7 +93,7 @@ export class DropboxService {
     this.tokenService.setAccessToken(token);
   }
 
-  private readonly desktopRenderWidthPx = 1123;
+  private readonly desktopRenderWidthPx = 800;
   private readonly pdfMarginMm = 10;
   private readonly canvasScale = 2;
 

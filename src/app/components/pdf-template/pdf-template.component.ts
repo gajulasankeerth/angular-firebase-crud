@@ -29,6 +29,9 @@ export interface PdfFormData {
   projectTypes: string[];
   areas: AreaItem[];
   clientMemo?: string;
+  signature?: string;
+  signatureDate?: string;
+  termsAccepted?: boolean;
 }
 
 @Component({
@@ -43,30 +46,41 @@ export class PdfTemplateComponent implements OnChanges {
 
   today: string = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
-    month: 'long',
+    month: 'short',
     day: 'numeric',
   });
+
+  get displaySignatureDate(): string {
+    return (
+      this.formData?.signatureDate ||
+      new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      })
+    );
+  }
 
   projectTypeOptions = [
     {
       key: 'newCabinets',
       label: 'New Cabinets',
-      sub: 'Brand new cabinet installation',
+      sub: 'Brand new cabinet installation ready for template',
     },
     {
       key: 'preExistingCabinets',
       label: 'Pre-Existing Cabinets',
-      sub: 'Working with current cabinets',
+      sub: 'Fabricating onto existing structural cabinets',
     },
     {
       key: 'remodel',
-      label: 'Remodel',
-      sub: 'Updating existing kitchen',
+      label: 'Remodel / Renovation',
+      sub: 'Updating kitchen, bath, or laundry layout',
     },
     {
       key: 'removeExistingCounters',
-      label: 'Remove Existing Counters',
-      sub: 'Demo of old countertops needed',
+      label: 'Tear Out & Removal',
+      sub: 'Demolition and disposal of old tops required',
     },
   ];
 

@@ -3,8 +3,8 @@
     <!-- HEADER -->
     <header class="pdf-header">
       <div class="header-brand">
-        <svg width="48" height="48" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-          <g stroke="#C9A84C" stroke-width="10" stroke-linecap="round">
+        <svg width="40" height="40" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <g stroke="#D4AF37" stroke-width="10" stroke-linecap="round">
             <line x1="0" y1="30" x2="120" y2="150" />
             <line x1="-20" y1="0" x2="100" y2="120" />
             <line x1="20" y1="-20" x2="140" y2="100" />
@@ -15,11 +15,11 @@
         </svg>
         <div>
           <div class="brand-name">Lusso Granite</div>
-          <div class="brand-tag">Premium Stone Countertops</div>
+          <div class="brand-tag">Artisanal Stone Fabrication &amp; Installation</div>
         </div>
       </div>
       <div class="header-right">
-        <div class="label">Contact</div>
+        <div class="label">Project Consultation Specification</div>
         <div class="value">Clarksville, TN &nbsp;·&nbsp; (931) 896-2245</div>
         <div class="doc-date">{{ today }}</div>
       </div>
@@ -27,7 +27,7 @@
     <div class="gold-rule"></div>
 
     <div class="pdf-body">
-      <!-- CUSTOMER INFORMATION -->
+      <!-- 1. CUSTOMER INFORMATION -->
       <div class="section">
         <div class="section-head">
           <span class="section-title">Customer Information</span>
@@ -37,81 +37,81 @@
           <div class="field-grid g3">
             <div class="field">
               <span class="field-label">First Name</span>
-              <span class="field-value">{{ formData?.firstName }}</span>
+              <span class="field-value">{{ formData?.firstName || '—' }}</span>
             </div>
             <div class="field">
               <span class="field-label">Last Name</span>
-              <span class="field-value">{{ formData?.lastName }}</span>
+              <span class="field-value">{{ formData?.lastName || '—' }}</span>
             </div>
             <div class="field">
               <span class="field-label">Middle Initial</span>
-              <span class="field-value">{{ formData?.middleInitial }}</span>
+              <span class="field-value">{{ formData?.middleInitial || '—' }}</span>
             </div>
             <div class="field">
               <span class="field-label">Phone</span>
-              <span class="field-value">{{ formData?.phone }}</span>
+              <span class="field-value">{{ formData?.phone || '—' }}</span>
             </div>
             <div class="field">
               <span class="field-label">Secondary Phone</span>
-              <span class="field-value">{{ formData?.secondaryPhone }}</span>
+              <span class="field-value">{{ formData?.secondaryPhone || '—' }}</span>
             </div>
             <div class="field">
               <span class="field-label">Email Address</span>
-              <span class="field-value">{{ formData?.email }}</span>
+              <span class="field-value">{{ formData?.email || '—' }}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- PROJECT ADDRESS -->
+      <!-- 2. PROJECT ADDRESS & SITE DETAILS -->
       <div class="section">
         <div class="section-head">
-          <span class="section-title">Project Address</span>
+          <span class="section-title">Project Address &amp; Site Details</span>
           <span class="section-subtitle">Installation location</span>
         </div>
         <div class="section-body address-body">
           <div class="field-grid g1">
             <div class="field">
               <span class="field-label">Street Address</span>
-              <span class="field-value">{{ formData?.streetAddress }}</span>
+              <span class="field-value">{{ formData?.streetAddress || '—' }}</span>
             </div>
           </div>
           <div class="field-grid g4">
             <div class="field">
               <span class="field-label">City</span>
-              <span class="field-value">{{ formData?.city }}</span>
+              <span class="field-value">{{ formData?.city || '—' }}</span>
             </div>
             <div class="field">
               <span class="field-label">State</span>
-              <span class="field-value">{{ formData?.state }}</span>
+              <span class="field-value">{{ formData?.state || '—' }}</span>
             </div>
             <div class="field">
               <span class="field-label">ZIP Code</span>
-              <span class="field-value">{{ formData?.zipCode }}</span>
+              <span class="field-value">{{ formData?.zipCode || '—' }}</span>
             </div>
             <div class="field">
               <span class="field-label">Lot Number</span>
-              <span class="field-value">{{ formData?.lotNumber }}</span>
+              <span class="field-value">{{ formData?.lotNumber || '—' }}</span>
             </div>
           </div>
           <div class="field-grid g2">
             <div class="field">
               <span class="field-label">Subdivision</span>
-              <span class="field-value">{{ formData?.subdivision }}</span>
+              <span class="field-value">{{ formData?.subdivision || '—' }}</span>
             </div>
             <div class="field">
               <span class="field-label">Contractor / Builder</span>
-              <span class="field-value">{{ formData?.contractorBuilder }}</span>
+              <span class="field-value">{{ formData?.contractorBuilder || '—' }}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- PROJECT TYPE -->
+      <!-- 3. SCOPE & PROJECT TYPE -->
       <div class="section">
         <div class="section-head">
-          <span class="section-title">Project Type</span>
-          <span class="section-subtitle">All selected options</span>
+          <span class="section-title">Scope &amp; Project Type</span>
+          <span class="section-subtitle">Selected site conditions</span>
         </div>
         <div class="section-body">
           <div class="project-types">
@@ -125,14 +125,14 @@
                   <path
                     d="M1.5 5l2.5 2.5L8.5 2"
                     stroke="#fff"
-                    stroke-width="1.8"
+                    stroke-width="2"
                     stroke-linecap="round"
                     stroke-linejoin="round"
                   />
                 </svg>
               </div>
-              <div>
-                <div>{{ opt.label }}</div>
+              <div class="chip-info">
+                <div class="chip-title">{{ opt.label }}</div>
                 <div class="chip-sub">{{ opt.sub }}</div>
               </div>
             </div>
@@ -140,10 +140,10 @@
         </div>
       </div>
 
-      <!-- PROJECT AREAS TABLE -->
+      <!-- 4. PROJECT AREAS TABLE -->
       <div class="section">
         <div class="section-head">
-          <span class="section-title">Project Areas</span>
+          <span class="section-title">Project Areas &amp; Specifications</span>
           <span class="section-subtitle">Countertop specifications per area</span>
         </div>
         <div class="areas-wrap">
@@ -162,14 +162,12 @@
             <tbody>
               <!-- Empty state -->
               <tr *ngIf="!hasAreas" class="empty-row">
-                <td colspan="7">No areas added.</td>
+                <td colspan="7">No configured project areas.</td>
               </tr>
 
               <!-- Area rows -->
               <tr *ngFor="let area of formData?.areas">
-                <td>
-                  {{ area.areaType }}
-                </td>
+                <td class="area-name-cell">{{ area.areaType }}</td>
                 <td>{{ getMaterial(area) }}</td>
                 <td>{{ area.edgeStyle }}</td>
                 <td>{{ area.sinkType }}</td>
@@ -182,45 +180,56 @@
         </div>
       </div>
 
-      <!-- MEMO -->
-      <div class="section">
+      <!-- 5. PROJECT NOTES & MEMO -->
+      <div class="section" *ngIf="memo && memo !== 'No notes provided.'">
         <div class="section-head">
-          <span class="section-title">Project Notes &amp; Memo</span>
-          <span class="section-subtitle">Special instructions for the client</span>
+          <span class="section-title">Project Notes &amp; Special Instructions</span>
+          <span class="section-subtitle">Estimator &amp; client instructions</span>
         </div>
         <div class="section-body">
           <div class="memo-box">{{ memo }}</div>
         </div>
       </div>
 
-      <!-- IMPORTANT INFORMATION -->
-      <div class="section">
+      <!-- 6. TERMS OF SERVICE & POLICIES (Aligned with Facelift) -->
+      <div class="section terms-section">
         <div class="section-head">
-          <span class="section-title">Important Information</span>
+          <span class="section-title">Terms of Service</span>
+          <span class="section-subtitle">Lusso Granite Policies</span>
         </div>
-        <div class="section-body">
-          <ul class="info-list">
-            <li>
-              <div class="bullet"></div>
-              <span>We do not seal natural stone</span>
-            </li>
-            <li>
-              <div class="bullet"></div>
-              <span>We do not perform plumbing or electrical work</span>
-            </li>
-            <li>
-              <div class="bullet"></div>
-              <span>Please remove all appliances prior to installation</span>
-            </li>
-            <li>
-              <div class="bullet"></div>
-              <span>50% down payment required upon job approval</span>
-            </li>
-            <li>
-              <div class="bullet"></div>
-              <span>We do not supply plumbing accessories</span>
-            </li>
-          </ul>
+        <div class="section-body terms-body">
+          <div class="terms-grid">
+            <div class="terms-col">
+              <div class="terms-item">
+                <span class="terms-bullet">•</span>
+                <span>We do not seal any natural stone.</span>
+              </div>
+              <div class="terms-item">
+                <span class="terms-bullet">•</span>
+                <span>We do not do any plumbing or electrical work.</span>
+              </div>
+            </div>
+            <div class="terms-col">
+              <div class="terms-item">
+                <span class="terms-bullet">•</span>
+                <span>Please pull out appliances prior to installation.</span>
+              </div>
+              <div class="terms-item">
+                <span class="terms-bullet">•</span>
+                <span>We do not supply any plumbing accessories.</span>
+              </div>
+            </div>
+          </div>
+          <div class="terms-payment-row">
+            <div class="terms-item payment-item">
+              <span class="terms-star">*</span>
+              <span><strong>50% down payment</strong> required upon job approval.</span>
+            </div>
+            <div class="terms-item payment-item">
+              <span class="terms-star">*</span>
+              <span><strong>Please have the jobsite ready</strong> on the day of installation.</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -229,24 +238,28 @@
     <!-- SIGNATURE ROW -->
     <div class="sig-row">
       <div class="sig-field">
-        <div class="sig-line"></div>
+        <div class="sig-line sig-line-with-img">
+          <img *ngIf="formData?.signature" [src]="formData?.signature" class="sig-drawn-image" alt="Customer Signature" />
+        </div>
         <div class="sig-label">Customer Signature</div>
       </div>
       <div class="sig-field">
-        <div class="sig-line"></div>
+        <div class="sig-line sig-line-with-img">
+          <span class="sig-date-text">{{ displaySignatureDate }}</span>
+        </div>
         <div class="sig-label">Date</div>
       </div>
       <div class="sig-field">
         <div class="sig-line"></div>
-        <div class="sig-label">Sales Representative</div>
+        <div class="sig-label">Lusso Representative Signature</div>
       </div>
     </div>
 
     <!-- FOOTER -->
     <div class="pdf-footer">
       <span class="footer-logo">Lusso Granite</span>
-      <span>Clarksville, TN &nbsp;·&nbsp; (931) 896-2245</span>
-      <span>Premium Stone Countertops</span>
+      <span>Clarksville, TN &nbsp;·&nbsp; (931) 896-2245 &nbsp;·&nbsp; sales@lussogranite.com</span>
+      <span>Artisanal Stone Fabrication &amp; Installation</span>
     </div>
   </div>
   <!-- /.page -->
